@@ -21,9 +21,14 @@ foreach (var dto in dtos)
     equipmentService.AddEquipment(dto);
 }
 
+equipmentService.RentEquipment("MSI GP66");
+equipmentService.RentEquipment("MSI GP66");
+equipmentService.ReturnEquipment("MSI GP66");
+equipmentService.RentEquipment("MSI GP66");
+
 var equipments = equipmentService.GetEquipments();
 
 foreach (var equipment in equipments)
 {
-    Console.WriteLine(equipment.name);
+    Console.WriteLine(equipment.name + ": " + equipment.status);
 }
