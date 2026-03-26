@@ -1,4 +1,5 @@
 ﻿using DefaultNamespace;
+using StudentRentalShop.equipment.dto;
 
 namespace StudentRentalShop.service;
 
@@ -13,7 +14,7 @@ public class EquipmentService
         _equipments = new List<Equipment>();
     }
 
-    public static EquipmentService getInstance()
+    public static EquipmentService GetInstance()
     {
         if (_instance == null)
         {
@@ -27,17 +28,17 @@ public class EquipmentService
         return _equipments;
     }
 
-    public void AddEquipment(Equipment equipment)
+    public void AddEquipment(EquipmentDto equipmentDto)
     {
-        _equipments.Add(equipment);
+        _equipments.Add(EquipmentFactory.create(equipmentDto));
     }
 
-    public void rentEquipment(string name)
+    public void RentEquipment(string name)
     {
         GetEquipment(name).status = EquipmentStatus.Available;
     }
 
-    public void returnEquipment(string name)
+    public void ReturnEquipment(string name)
     {
         GetEquipment(name).status = EquipmentStatus.Available;
     }
