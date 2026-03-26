@@ -35,18 +35,42 @@ public class EquipmentService
 
     public void RentEquipment(string name)
     {
-        GetEquipment(name).status = EquipmentStatus.Available;
+        Equipment equipment = GetEquipment(name);
+        if (equipment.status != EquipmentStatus.Available)
+        {
+            Console.WriteLine(equipment.name + " is not available.");
+            return;
+        }
+        equipment.status = EquipmentStatus.Borrowed;
     }
 
     public void ReturnEquipment(string name)
     {
-        GetEquipment(name).status = EquipmentStatus.Available;
+        Equipment equipment = GetEquipment(name);
+        if (equipment.status == EquipmentStatus.Available)
+        {
+            Console.WriteLine(equipment.name + " is already returned.");
+            return;
+        }
+        equipment.status = EquipmentStatus.Available;
     }
+    
+    public void setUnavailable(string name)
+    {
+        Equipment equipment = GetEquipment(name);
+        if (equipment.status == EquipmentStatus.Unavailable)
+        {
+            Console.WriteLine(equipment.name + " is already unavailable.");
+            return;
+        }
+        equipment.status = EquipmentStatus.Unavailable;
+    }
+
     
     private Equipment GetEquipment(string name)
     {
         foreach (Equipment equipment in _equipments)
-        {
+        {   
             if (equipment.name == name)
             {
                 return equipment;
