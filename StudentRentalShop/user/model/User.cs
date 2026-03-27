@@ -2,6 +2,7 @@
 
 namespace StudentRentalShop.user.model;
 
+
 public abstract class User
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
