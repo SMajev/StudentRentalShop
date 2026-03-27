@@ -4,6 +4,7 @@ namespace DefaultNamespace;
 
 public class Equipment
 {
+    public Guid Id { get; private set; } = Guid.NewGuid();
     public string name { get; set; }
     public EquipmentStatus status { get; set; } = EquipmentStatus.Available;
 
