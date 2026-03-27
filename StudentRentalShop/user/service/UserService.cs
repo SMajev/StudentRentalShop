@@ -9,12 +9,11 @@ public class UserService
     private static UserService Instance { get; set; } = null;
     
     private static List<User> users;
-
-
+    
     private UserService()
     {
     }
-
+    
     public static UserService GetInstance()
     {
         Instance ??= new UserService();
@@ -27,12 +26,13 @@ public class UserService
         return users;
     }
 
+    
     public void AddUser(UserDto userDto)
     {
         users.Add(UserFactory.Create(userDto));
     }
 
-
+    
     public User GetUser(String name, String surname)
     {
         foreach (User user in users) 
