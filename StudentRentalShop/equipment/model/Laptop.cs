@@ -7,11 +7,10 @@ public class Laptop : Equipment
 
     public Laptop(string name, int ramGb, int cpu) : base(name)
     {
+        if (ramGb < 0) throw new ArgumentOutOfRangeException(nameof(ramGb));
+        if (cpu < 0) throw new ArgumentOutOfRangeException(nameof(cpu));
         RamGb = ramGb;
         Cpu = cpu;
     }
     
-    public Laptop(string name) : base(name)
-    {
-    }
 }

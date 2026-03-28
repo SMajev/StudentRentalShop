@@ -2,7 +2,7 @@
 
 public class Employee : User
 {
-    public override int maxLoans { get; } = 2;
+    public override int MaxLoans { get; } = 5;
 
     public Employee(string firstName, string lastName) : base(firstName, lastName)
     {

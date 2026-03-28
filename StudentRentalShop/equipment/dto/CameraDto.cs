@@ -4,10 +4,10 @@ namespace StudentRentalShop.equipment.dto;
 
 public class CameraDto : EquipmentDto
 {
-    public int ResolutionMp { get; set; }
-    public bool IsDigital { get; set; }
+    public int ResolutionMp { get; }
+    public bool IsDigital { get; }
 
-    public CameraDto(string name, EquipmentType equipmentType, int resolutionMp, bool isDigital) : base(name, equipmentType)
+    public CameraDto(string name, int resolutionMp, bool isDigital) : base(name, EquipmentType.Camera)
     {
         ResolutionMp = resolutionMp;
         IsDigital = isDigital;

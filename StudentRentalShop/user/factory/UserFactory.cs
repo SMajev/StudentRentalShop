@@ -1,6 +1,6 @@
-﻿using DefaultNamespace;
-using StudentRentalShop.user.dto;
+﻿using StudentRentalShop.user.dto;
 using StudentRentalShop.user.model;
+using StudentRentalShop.user.modelenum;
 
 namespace StudentRentalShop.user.factory;
 
