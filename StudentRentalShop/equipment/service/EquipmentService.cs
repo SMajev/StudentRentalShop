@@ -25,6 +25,11 @@ public class EquipmentService
         return _equipments;
     }
     
+    public IReadOnlyList<Equipment> GetAvailableEquipments()
+    {
+        return _equipments.Where(x => x.status == EquipmentStatus.Available).ToList();
+    }
+    
     public void AddEquipment(EquipmentDto equipmentDto)
     {
         _equipments.Add(EquipmentFactory.create(equipmentDto));

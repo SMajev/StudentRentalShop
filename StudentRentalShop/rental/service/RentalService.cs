@@ -35,7 +35,7 @@ public class RentalService
         try
         {
             User user = _userService.GetUserByNameLastName(rentalRequest.FirstName, rentalRequest.LastName);
-            if (GetUserRecords(user.Id).Count >= user.MaxLoans)
+            if (GetActiveRecordByUser(user.Id).Count >= user.MaxLoans)
             {
                 return "User is out of capacity";
             }
@@ -74,6 +74,8 @@ public class RentalService
             {
                 int delayDays = (DateTime.Now - rec.DateTo).Days;
                 int penalty = delayDays * PenaltyPerDayPln;
+                rec.Penalty += penalty;
+                rec.IsReturnedInTime = true;
                 return $"Late return: {delayDays} days. Penalty: {penalty}";
             }
             return "Returned on time.";
@@ -84,13 +86,18 @@ public class RentalService
         }
     }
     
-
+    public List<RentRecord> GetActiveRecord()
+    {
+        return _records
+                   .Where(rec => rec.IsActive)
+                   .ToList();
+    }
     
-    private List<RentRecord> GetActiveRecord(Guid userId, Guid equipmentID)
+    private List<RentRecord> GetActiveRecordByUser(Guid userId)
     {
         return GetUserRecords(userId)
-                   .Where(rec => rec.isActive())
-                   .ToList();
+            .Where(rec => rec.IsActive)
+            .ToList();
     }
 
     public List<RentRecord> GetOverdueRecords()
@@ -103,8 +110,10 @@ public class RentalService
     private RentRecord GetRecord(Guid userId, Guid equipmentID)
     {
         return GetUserRecords(userId)
-            .FirstOrDefault(rec => rec.UserId == userId && rec.EquipmentId == equipmentID)
-             ?? throw new KeyNotFoundException("Record not found");
+            .FirstOrDefault(rec => rec.UserId == userId
+                                   && rec.EquipmentId == equipmentID
+                                   && rec.DateReturned == null)
+            ?? throw new KeyNotFoundException("Record doesnt Exist");
     }
 
     public IReadOnlyList<RentRecord> GetUserRecords(Guid userId)

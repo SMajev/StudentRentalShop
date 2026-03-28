@@ -38,7 +38,9 @@ Console.WriteLine("RentOperation: " + rentalService.Rent(Req3));
 Console.WriteLine("RentOperation: " + rentalService.Rent(Req4));
 Console.WriteLine("RentOperation: " + rentalService.Rent(Req5));
 
-reportService.printRentalReport();
+reportService.printRentalReportByUser();
+
+reportService.printActiveRentals();
 
 reportService.PrintEquipmentReport();
 
@@ -48,3 +50,6 @@ reportService.printRentalsFor("Jack", "Nicholson");
 
 
 reportService.printOverdueRentalsFor();
+
+
+reportService.printAvailableEquipmentReport();
