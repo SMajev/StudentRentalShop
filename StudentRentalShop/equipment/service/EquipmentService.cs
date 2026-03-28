@@ -29,9 +29,7 @@ public class EquipmentService
     {
         return GetEquipment(name).Id;
     }
-
-
-
+    
     public void AddEquipment(EquipmentDto equipmentDto)
     {
         _equipments.Add(EquipmentFactory.create(equipmentDto));
@@ -40,7 +38,7 @@ public class EquipmentService
     public Guid RentEquipment(string name)
     {
         Equipment equipment = GetEquipment(name);
-        if (equipment.status == EquipmentStatus.Borrowed)
+        if (equipment.status != EquipmentStatus.Available)
         {
             throw new InvalidOperationException(equipment.name + " Equipment is not available");
         }

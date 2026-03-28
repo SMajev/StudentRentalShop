@@ -19,16 +19,7 @@ userService.AddUser(new UserDto("Huhg", "Jackman", UserType.Employee));
 userService.AddUser(new UserDto("Eva", "Green", UserType.Employee));
 userService.AddUser(new UserDto("Margot", "Robbie", UserType.Student));
 
-Console.WriteLine("-------------- Users --------------");
-foreach (User user in userService.GetUsers())
-{
-    Console.WriteLine(
-        user.Id
-        + ", " + user.FirstName
-        + ", " + user.LastName
-        + ", " + user.GetType().ToString().Split(".")[3]
-    );
-}
+
 
 equipmentService.AddEquipment(new LaptopDto("MSI GP66", 16, 16));
 equipmentService.AddEquipment(new CameraDto("DJI Osmo", 10000, true));
@@ -36,26 +27,25 @@ equipmentService.AddEquipment(new ProjectorDto("Optoma HD2", 10000, true));
 equipmentService.AddEquipment(new LaptopDto("Dell Alienware", 16, 32));
 equipmentService.AddEquipment(new LaptopDto("MacBook pro", 16, 16));
 
-Console.WriteLine("-------------- Equipment --------------");
-foreach (Equipment equipment in equipmentService.GetEquipments())
-{
-    Console.WriteLine(equipment.Id
-                      + " " + equipment.name
-                      + " " + equipment.GetType().ToString().Split(".")[1]
-                      );
-}
 
-RentalRequest Req1 = new RentalRequest("Jack", "Nicholson", "MSI GP66");
-RentalRequest req2 = new RentalRequest("Jack", "Nicholson", "MSI GP66");
-RentalRequest req3 = new RentalRequest("Jack", "Nicholson", "MSI GP666");
-RentalRequest req4 = new RentalRequest("Jack", "Nicholson", "DJI Osmo");
-RentalRequest req5 = new RentalRequest("Jack", "Nicholson", "Optoma HD2"); 
 
+RentalRequest Req1 = new RentalRequest("Jack", "Nicholson", "MSI GP66", 7);
+RentalRequest req2 = new RentalRequest("Jack", "Nicholson", "MSI GP66",2);
+RentalRequest req3 = new RentalRequest("Jack", "Nicholson", "MSI GP666", 7);
+RentalRequest req4 = new RentalRequest("Jack", "Nicholson", "DJI Osmo",7);
+RentalRequest req5 = new RentalRequest("Jack", "Nicholson", "Optoma HD2", 7); 
+
+equipmentService.SetUnavailable("MSI GP66");
 Console.WriteLine(rentalService.Rent(Req1));
 Console.WriteLine(rentalService.Return(req2));
 Console.WriteLine(rentalService.Rent(Req1));
 Console.WriteLine(rentalService.Rent(req4));
 
 
+// rentalService.PrintEquipmentReport();
+// rentalService.printRentalReport();
+// rentalService.printUsersReport();
 
-rentalService.printRentalReport();
+
+rentalService.printRentalsFor("Jack", "Nicholson");
+rentalService.printOverdueRentalsFor("Jack", "Nicholson");
