@@ -75,9 +75,10 @@ public class RentalService
                 int delayDays = (DateTime.Now - rec.DateTo).Days;
                 int penalty = delayDays * PenaltyPerDayPln;
                 rec.Penalty += penalty;
-                rec.IsReturnedInTime = true;
+                rec.IsReturnedInTime = false;
                 return $"Late return: {delayDays} days. Penalty: {penalty}";
             }
+            rec.IsReturnedInTime = true;
             return "Returned on time.";
         }
         catch (KeyNotFoundException e) 
@@ -91,6 +92,13 @@ public class RentalService
         return _records
                    .Where(rec => rec.IsActive)
                    .ToList();
+    }
+    
+    public List<RentRecord> GetActiveUserRecord(Guid userId)
+    {
+        return GetActiveRecordByUser(userId)
+            .Where(rec => rec.IsActive)
+            .ToList();
     }
     
     private List<RentRecord> GetActiveRecordByUser(Guid userId)

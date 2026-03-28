@@ -44,10 +44,12 @@ public class ReportService
     public void printAvailableEquipmentReport()
     {   
         Console.WriteLine("-------------- Available Equipment ---------------");
-        foreach (Equipment equipment in _equipmentService.GetAvailableEquipments())
+        IReadOnlyList<Equipment> equipments = _equipmentService.GetAvailableEquipments();
+        foreach (Equipment equipment in equipments)
         {
             Console.WriteLine(equipment.GetType().ToString().Split(".")[1] + " " + equipment.name);
         }
+        Console.WriteLine($"{equipments.Count} records\n");
     }
 
     public void printActiveRentals()
@@ -94,7 +96,7 @@ public class ReportService
         User user = _userService.GetUserByNameLastName(firstName, lastName);
         Console.WriteLine("-------------- User --------------");
         Console.WriteLine("User: " + user.FirstName + " " + user.LastName);
-        IReadOnlyList<RentRecord> records = _rentalService.GetUserRecords(user.Id);
+        IReadOnlyList<RentRecord> records = _rentalService.GetActiveUserRecord(user.Id);
         foreach (RentRecord r in records)
         {
             Console.WriteLine($"  {_equipmentService.GetEquipmentById(r.EquipmentId).name} ({r.DateFrom:dd.MM} - {r.DateTo:dd.MM})");
@@ -112,5 +114,20 @@ public class ReportService
         }
         Console.WriteLine($"{counter} records\n");
     }
-    
+
+
+    public void PrintRentalGeneralHistory()
+    {
+        Console.WriteLine("-------------- History --------------");
+        int counter = 0;
+        foreach (RentRecord r in _rentalService.getRecords())
+        {
+            Console.WriteLine($"" +
+                              $"{_equipmentService.GetEquipmentById(r.EquipmentId).name} " +
+                              $"({r.DateFrom:dd.MM} - {r.DateTo:dd.MM})" +
+                              $" status: {_equipmentService.GetEquipmentById(r.EquipmentId).status}"
+                              );
+        }
+        Console.WriteLine($"{counter} records\n");
+    } 
 }

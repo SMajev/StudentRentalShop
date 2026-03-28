@@ -39,17 +39,56 @@ Console.WriteLine("RentOperation: " + rentalService.Rent(Req4));
 Console.WriteLine("RentOperation: " + rentalService.Rent(Req5));
 
 reportService.printRentalReportByUser();
-
 reportService.printActiveRentals();
-
 reportService.PrintEquipmentReport();
+reportService.printUsersReport();
+reportService.printRentalsFor("Jack", "Nicholson");
+reportService.printOverdueRentalsFor();
+reportService.printAvailableEquipmentReport();
+reportService.PrintRentalGeneralHistory();
 
+rentalService.Return(new RentalRequest("Jack", "Nicholson", "MSI GP66"));
+rentalService.Return(new RentalRequest("Jack", "Nicholson", "Optoma HD2"));
+
+reportService.printRentalReportByUser();
+reportService.printActiveRentals();
+reportService.PrintEquipmentReport();
+reportService.printUsersReport();
+reportService.printRentalsFor("Jack", "Nicholson");
+reportService.printOverdueRentalsFor();
+reportService.printAvailableEquipmentReport();
+reportService.PrintRentalGeneralHistory();
+
+RentalRequest Req6 = new RentalRequest("Eva", "Green", "MSI GP66", 7);
+RentalRequest Req7 = new RentalRequest("Eva", "Green", "MSI GP66");
+RentalRequest Req8 = new RentalRequest("Eva", "Green", "MSI GP666", 7);
+RentalRequest Req9 = new RentalRequest("Eva", "Green", "DJI Osmo",7);
+RentalRequest Req10 = new RentalRequest("Eva", "Green", "Optoma HD2", 7);
+
+reportService.printRentalReportByUser();
+reportService.printActiveRentals();
+reportService.PrintEquipmentReport();
+reportService.printUsersReport();
+reportService.printRentalsFor("Jack", "Nicholson");
+reportService.printOverdueRentalsFor();
+reportService.printAvailableEquipmentReport();
+reportService.PrintRentalGeneralHistory();
+
+Console.WriteLine("RentOperation: " + rentalService.Rent(Req6));
+Console.WriteLine("RentOperation: " + rentalService.Rent(Req7));
+Console.WriteLine("RentOperation: " + rentalService.Rent(Req8));
+Console.WriteLine("RentOperation: " + rentalService.Rent(Req9));
+Console.WriteLine("RentOperation: " + rentalService.Rent(Req10));
+
+
+reportService.printRentalReportByUser();
+reportService.printActiveRentals();
+reportService.PrintEquipmentReport();
 reportService.printUsersReport();
 
-reportService.printRentalsFor("Jack", "Nicholson");
-
-
 reportService.printOverdueRentalsFor();
-
-
 reportService.printAvailableEquipmentReport();
+reportService.PrintRentalGeneralHistory();
+
+reportService.printRentalsFor("Eva", "Green");
+reportService.printRentalsFor("Jack", "Nicholson");
