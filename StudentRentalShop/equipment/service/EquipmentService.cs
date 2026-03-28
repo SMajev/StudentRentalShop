@@ -24,11 +24,6 @@ public class EquipmentService
     {
         return _equipments;
     }
-
-    public Guid GetEquipmentId(string name)
-    {
-        return GetEquipment(name).Id;
-    }
     
     public void AddEquipment(EquipmentDto equipmentDto)
     {
@@ -37,7 +32,7 @@ public class EquipmentService
 
     public Guid RentEquipment(string name)
     {
-        Equipment equipment = GetEquipment(name);
+        Equipment equipment = GetEquipmentByName(name);
         if (equipment.status != EquipmentStatus.Available)
         {
             throw new InvalidOperationException(equipment.name + " Equipment is not available");
@@ -46,20 +41,19 @@ public class EquipmentService
         return equipment.Id;
     }
 
-    public string ReturnEquipment(string name)
+    public void ReturnEquipment(Guid id)
     {
-        Equipment equipment = GetEquipment(name);
+        Equipment equipment = GetEquipmentById(id);
         if (equipment.status == EquipmentStatus.Available)
         {
             throw new InvalidOperationException(equipment.name + " is already returned.");
         }
         equipment.status = EquipmentStatus.Available;
-        return equipment.Id.ToString();
     }
     
     public void SetUnavailable(string name)
     {
-        Equipment equipment = GetEquipment(name);
+        Equipment equipment = GetEquipmentByName(name);
         if (equipment.status == EquipmentStatus.Unavailable)
         {
             Console.WriteLine(equipment.name + " is already unavailable.");
@@ -69,28 +63,16 @@ public class EquipmentService
     }
 
     
-    private Equipment GetEquipment(string name)
+    public Equipment GetEquipmentByName(string name)
     {
-        foreach (Equipment equipment in _equipments)
-        {   
-            if (equipment.name == name)
-            {
-                return equipment;
-            }
-        }
-        throw new KeyNotFoundException("Equipment not found");
+        return _equipments.FirstOrDefault(x => x.name == name)
+            ?? throw new KeyNotFoundException("Equipment not found");
     }
     
     
     public Equipment GetEquipmentById(Guid id)
     {
-        foreach (Equipment equipment in _equipments)
-        {   
-            if (equipment.Id == id)
-            {
-                return equipment;
-            }
-        }
-        throw new KeyNotFoundException("Equipment not found");
+        return _equipments.FirstOrDefault(x => x.Id == id)
+               ?? throw new KeyNotFoundException("Equipment not found");
     }
 }

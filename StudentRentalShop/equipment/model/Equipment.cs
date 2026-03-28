@@ -11,7 +11,7 @@ public class Equipment
 
     public Equipment(string name)
     {
-        if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name));
+        if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException(nameof(name));
         this.name = name;
         status = EquipmentStatus.Available;
     }

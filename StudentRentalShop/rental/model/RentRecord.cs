@@ -6,6 +6,7 @@ public class RentRecord
     public Guid EquipmentId {get; set;}
     public DateTime DateFrom;
     public DateTime DateTo;
+    public DateTime DateReturned;
 
     public RentRecord(Guid userId, Guid equipmentId, DateTime dateFrom, DateTime dateTo)
     {
@@ -13,5 +14,10 @@ public class RentRecord
         DateFrom = dateFrom;
         DateTo = dateTo;
         EquipmentId = equipmentId;
+    }
+    
+    public Boolean isActive()
+    {
+        return DateReturned == null;
     }
 }

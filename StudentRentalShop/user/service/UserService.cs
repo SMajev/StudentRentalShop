@@ -32,27 +32,18 @@ public class UserService
     }
 
     
-    public User GetUser(String name, String surname)
+    public User GetUserByNameLastName(String name, String surname)
     {
-        foreach (User user in _users) 
-        {
-            if (user.FirstName == name && user.LastName == surname)
-            {
-                return user;
-            }
-        }
-        throw  new KeyNotFoundException("User not found");
+        return _users
+            .FirstOrDefault(user => user.FirstName == name &&  user.LastName == surname)
+                ?? throw new KeyNotFoundException("User not found");
+
     }
     
     public User GetUserById(Guid id)
     {
-        foreach (User user in _users) 
-        {
-            if (user.Id == id)
-            {
-                return user;
-            }
-        }
-        throw  new KeyNotFoundException("User not found");
+        return _users
+                   .FirstOrDefault(user => user.Id == id)
+               ?? throw new KeyNotFoundException("User not found");
     }
 }

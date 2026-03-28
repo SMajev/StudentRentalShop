@@ -1,4 +1,5 @@
-﻿using DefaultNamespace;
+﻿using System.ComponentModel;
+using DefaultNamespace;
 using StudentRentalShop.rental.model;
 using StudentRentalShop.service;
 using StudentRentalShop.user;
@@ -10,11 +11,13 @@ public class RentalService
 {
     private static RentalService _instance;
     
-    private EquipmentService _equipmentService = EquipmentService.Instance();
-    private UserService _userService = UserService.Instance();
-    private Dictionary<Guid, List<RentRecord>> _rentalRecords = new Dictionary<Guid, List<RentRecord>>();
-    
+    private readonly EquipmentService _equipmentService = EquipmentService.Instance();
+    private readonly UserService _userService = UserService.Instance();
+    private readonly List<RentRecord> _records = [];
     private const int PenaltyPerDayPln = 10;
+    
+    
+    private RentalService() {}
     
     public static RentalService Instance()
     {
@@ -22,24 +25,17 @@ public class RentalService
         return _instance;
     }
     
-    
-    private RentalService()
+    public IReadOnlyList<RentRecord> getRecords()
     {
-        
-    }
-
-    public IReadOnlyDictionary<Guid, List<RentRecord>> getRecords()
-    {
-        return _rentalRecords;
+        return _records;
     }
 
     public string Rent(RentalRequest rentalRequest)
     {
         try
         {
-            User user = _userService.GetUser(rentalRequest.FirstName, rentalRequest.LastName);
-            if (!_rentalRecords.ContainsKey(user.Id)) _rentalRecords.Add(user.Id, new List<RentRecord>());
-            if (_rentalRecords[user.Id].Count >= user.MaxLoans)
+            User user = _userService.GetUserByNameLastName(rentalRequest.FirstName, rentalRequest.LastName);
+            if (GetUserRecords(user.Id).Count >= user.MaxLoans)
             {
                 return "User is out of capacity";
             }
@@ -49,7 +45,7 @@ public class RentalService
                 DateTime.Now,
                 DateTime.Now.AddDays(rentalRequest.RentalDurationDays)
             );
-            _rentalRecords[user.Id].Add(rentRecord);
+            _records.Add(rentRecord);
         }
         catch (KeyNotFoundException e) 
         {
@@ -63,14 +59,17 @@ public class RentalService
     }
 
 
+
     public string Return(RentalRequest rentalRequest)
     {
         try
         {
-            User user = _userService.GetUser(rentalRequest.FirstName, rentalRequest.LastName);
-            RentRecord rec = GetRecord(user.Id, rentalRequest.EquipmentName);
-            _rentalRecords[user.Id].Remove(rec);
-            _equipmentService.ReturnEquipment(rentalRequest.EquipmentName);
+            User user = _userService.GetUserByNameLastName(rentalRequest.FirstName, rentalRequest.LastName);
+            Equipment equipment = _equipmentService.GetEquipmentByName(rentalRequest.EquipmentName);
+            RentRecord rec = GetRecord(user.Id, equipment.Id);
+            _equipmentService.ReturnEquipment(equipment.Id);
+            rec.DateReturned = DateTime.Now;
+            
             if (IsOverdue(rec.DateTo))
             {
                 int delayDays = (DateTime.Now - rec.DateTo).Days;
@@ -84,88 +83,45 @@ public class RentalService
             return e.Message;
         }
     }
+    
 
-    public RentRecord GetRecord(Guid userId, string equipmentName)
+    
+    private List<RentRecord> GetActiveRecord(Guid userId, Guid equipmentID)
     {
-        foreach (RentRecord rec in _rentalRecords[userId])
-        {
-            if (rec.EquipmentId == _equipmentService.GetEquipmentId(equipmentName))
-            {
-                return rec;
-            }
-        }
-        throw new KeyNotFoundException("Record not found");
+        return GetUserRecords(userId)
+                   .Where(rec => rec.isActive())
+                   .ToList();
     }
 
-
-    public void printRentalReport()
+    public List<RentRecord> GetOverdueRecords()
     {
-        Console.WriteLine("-------------- Rentals --------------");
-        foreach (var (userId, records) in getRecords())
-        {
-            User user = _userService.GetUserById(userId);
-            Console.WriteLine("User: " + user.FirstName + " " + user.LastName);
-            foreach (RentRecord r in records)
-            {
-                Console.WriteLine($"  {_equipmentService.GetEquipmentById(r.EquipmentId).name} ({r.DateFrom:dd.MM} - {r.DateTo:dd.MM})");
-            }
-            Console.WriteLine($"{records.Count} records");
-        }
+        return _records
+            .Where(rec => IsOverdue(rec.DateTo))
+            .ToList();  
     }
     
-    public void PrintEquipmentReport()
+    private RentRecord GetRecord(Guid userId, Guid equipmentID)
     {
-        Console.WriteLine("-------------- Equipment --------------");
-        foreach (Equipment equipment in _equipmentService.GetEquipments())
-        {
-            Console.WriteLine(equipment.Id
-                              + " " + equipment.name
-                              + " " + equipment.GetType().ToString().Split(".")[1]
-            );
-        }
-    }
-    
-    public void printUsersReport()
-    {
-        Console.WriteLine("-------------- Users --------------");
-        foreach (User user in _userService.GetUsers())
-        {
-            Console.WriteLine(
-                user.Id
-                + ", " + user.FirstName
-                + ", " + user.LastName
-                + ", " + user.GetType().ToString().Split(".")[3]
-            );
-        }
+        return GetUserRecords(userId)
+            .FirstOrDefault(rec => rec.UserId == userId && rec.EquipmentId == equipmentID)
+             ?? throw new KeyNotFoundException("Record not found");
     }
 
-    public void printRentalsFor(String firstName, String lastName)
+    public IReadOnlyList<RentRecord> GetUserRecords(Guid userId)
     {
-        User user = _userService.GetUser(firstName, lastName);
-        Console.WriteLine("-------------- User --------------");
-        Console.WriteLine("User: " + user.FirstName + " " + user.LastName);
-        foreach (RentRecord r in _rentalRecords[user.Id])
-        {
-            Console.WriteLine($"  {_equipmentService.GetEquipmentById(r.EquipmentId).name} ({r.DateFrom:dd.MM} - {r.DateTo:dd.MM})");
-        }
-        Console.WriteLine($"{_rentalRecords[user.Id].Count} records");
+        return _records
+            .Where(rec => rec.UserId == userId)
+            .ToList();
     }
     
-    public void printOverdueRentalsFor(String firstName, String lastName)
+    public IReadOnlyDictionary<Guid, List<RentRecord>> GetRecordsByUser()
     {
-        User user = _userService.GetUser(firstName, lastName);
-        Console.WriteLine("-------------- Overdue --------------");
-        int counter = 0;
-        foreach (RentRecord r in _rentalRecords.SelectMany(x => x.Value))
-        {
-            if (IsOverdue(r.DateTo))
-            {
-                Console.WriteLine($"  {_equipmentService.GetEquipmentById(r.EquipmentId).name} ({r.DateFrom:dd.MM} - {r.DateTo:dd.MM})");
-            }
-            
-        }
-        Console.WriteLine($"{counter} records");
+        return _records
+            .GroupBy(rec => rec.UserId)
+            .ToDictionary(group => group.Key, group => group.ToList());
     }
+
+
 
     private bool IsOverdue(DateTime dateTo)
     {

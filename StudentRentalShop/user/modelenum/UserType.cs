@@ -1,4 +1,4 @@
-﻿namespace DefaultNamespace;
+﻿namespace StudentRentalShop.user.modelenum;
 
 public enum UserType
 {

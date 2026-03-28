@@ -18,5 +18,12 @@ public class RentalRequest
         RentalDurationDays = rentalDurationDays;
     }
     
+    public RentalRequest(string firstName, string lastName, string equipmentName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        EquipmentName = equipmentName;
+    }
+    
     
 }
