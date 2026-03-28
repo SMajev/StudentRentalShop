@@ -5,7 +5,7 @@ namespace StudentRentalShop.service;
 
 public class EquipmentService
 {
-    private static EquipmentService _instance = null;
+    private static EquipmentService _instance;
     
     List<Equipment> _equipments;
     
@@ -14,12 +14,9 @@ public class EquipmentService
         _equipments = new List<Equipment>();
     }
 
-    public static EquipmentService GetInstance()
+    public static EquipmentService Instance()
     {
-        if (_instance == null)
-        {
-            _instance = new EquipmentService();
-        }
+        _instance ??= new EquipmentService();
         return _instance;
     }
 
@@ -28,34 +25,41 @@ public class EquipmentService
         return _equipments;
     }
 
+    public Guid GetEquipmentId(string name)
+    {
+        return GetEquipment(name).Id;
+    }
+
+
+
     public void AddEquipment(EquipmentDto equipmentDto)
     {
         _equipments.Add(EquipmentFactory.create(equipmentDto));
     }
 
-    public void RentEquipment(string name)
+    public Guid RentEquipment(string name)
     {
         Equipment equipment = GetEquipment(name);
-        if (equipment.status != EquipmentStatus.Available)
+        if (equipment.status == EquipmentStatus.Borrowed)
         {
-            Console.WriteLine(equipment.name + " is not available.");
-            return;
+            throw new InvalidOperationException(equipment.name + " Equipment is not available");
         }
         equipment.status = EquipmentStatus.Borrowed;
+        return equipment.Id;
     }
 
-    public void ReturnEquipment(string name)
+    public string ReturnEquipment(string name)
     {
         Equipment equipment = GetEquipment(name);
         if (equipment.status == EquipmentStatus.Available)
         {
-            Console.WriteLine(equipment.name + " is already returned.");
-            return;
+            throw new InvalidOperationException(equipment.name + " is already returned.");
         }
         equipment.status = EquipmentStatus.Available;
+        return equipment.Id.ToString();
     }
     
-    public void setUnavailable(string name)
+    public void SetUnavailable(string name)
     {
         Equipment equipment = GetEquipment(name);
         if (equipment.status == EquipmentStatus.Unavailable)
@@ -80,4 +84,15 @@ public class EquipmentService
     }
     
     
+    public Equipment GetEquipmentById(Guid id)
+    {
+        foreach (Equipment equipment in _equipments)
+        {   
+            if (equipment.Id == id)
+            {
+                return equipment;
+            }
+        }
+        throw new KeyNotFoundException("Equipment not found");
+    }
 }

@@ -4,7 +4,7 @@ namespace StudentRentalShop.equipment.dto;
 
 public class EquipmentDto
 {
-    public string Name { get; set; }
+    public string Name { get; }
     public EquipmentType EquipmentType { get; set; }
 
     public EquipmentDto(string name, EquipmentType equipmentType)

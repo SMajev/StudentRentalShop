@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using StudentRentalShop.user.model;
 
 namespace DefaultNamespace;
 

@@ -6,42 +6,53 @@ namespace StudentRentalShop.user;
 
 public class UserService
 {
-    private static UserService Instance { get; set; } = null;
-    
-    private static List<User> users;
+    private static UserService _instance;
+    private static readonly List<User> _users = new List<User>();
     
     private UserService()
     {
     }
     
-    public static UserService GetInstance()
+    public static UserService Instance()
     {
-        Instance ??= new UserService();
-        return Instance;
+        _instance ??= new UserService();
+        return _instance;
     }
 
 
     public IReadOnlyList<User> GetUsers()
     {
-        return users;
+        return _users;
     }
 
     
     public void AddUser(UserDto userDto)
     {
-        users.Add(UserFactory.Create(userDto));
+        _users.Add(UserFactory.Create(userDto));
     }
 
     
     public User GetUser(String name, String surname)
     {
-        foreach (User user in users) 
+        foreach (User user in _users) 
         {
             if (user.FirstName == name && user.LastName == surname)
             {
                 return user;
             }
         }
-        throw  new ArgumentException("User not found");
+        throw  new KeyNotFoundException("User not found");
+    }
+    
+    public User GetUserById(Guid id)
+    {
+        foreach (User user in _users) 
+        {
+            if (user.Id == id)
+            {
+                return user;
+            }
+        }
+        throw  new KeyNotFoundException("User not found");
     }
 }
