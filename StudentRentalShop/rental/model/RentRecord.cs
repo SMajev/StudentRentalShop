@@ -6,7 +6,9 @@ public class RentRecord
     public Guid EquipmentId {get; set;}
     public DateTime DateFrom;
     public DateTime DateTo;
-    public DateTime DateReturned;
+    public DateTime? DateReturned;
+    public bool? IsReturnedInTime {get; set;}
+    public int Penalty { get; set; } = 0;
 
     public RentRecord(Guid userId, Guid equipmentId, DateTime dateFrom, DateTime dateTo)
     {
@@ -16,8 +18,6 @@ public class RentRecord
         EquipmentId = equipmentId;
     }
     
-    public Boolean isActive()
-    {
-        return DateReturned == null;
-    }
+    public bool IsActive => DateReturned == null;
+
 }
